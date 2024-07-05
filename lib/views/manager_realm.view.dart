@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_app/repository/math_schema.dart' as repository;
 import 'package:math_app/services/realm.service.dart';
-import 'package:math_app/utils/string.util.dart';
 import 'package:realm/realm.dart';
 
 class ManagerRealm extends StatefulWidget {
@@ -57,7 +56,7 @@ class SearchRealmManager extends SearchDelegate {
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(
-                        "Produto: ${produtos[index].id} - ${produtos[index].nome} - ${StringUtils.numberToCurrency(produtos[index].preco)}"),
+                        "Produto: ${produtos[index].id} - ${produtos[index].name}"),
                   );
                 },
               );

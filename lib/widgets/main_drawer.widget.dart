@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:math_app/utils/string.util.dart';
 import 'package:widget_marquee/widget_marquee.dart';
 
@@ -43,50 +44,6 @@ class MainDrawer extends StatelessWidget {
                   },
                 ),
                 const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.widgets_rounded),
-                  title: const Text("Produtos"),
-                  onTap: () async {
-                    // var resultProduct = await showSearch(
-                    //   context: context,
-                    //   delegate: SearchProdutos(),
-                    // );
-
-                    // bool hasInternet = await NetworkUtil.checkInternet();
-                    // if (resultProduct != null &&
-                    //     hasInternet &&
-                    //     context.mounted) {
-                    //   ComponentsUtils.showDialogLoading(
-                    //       "Buscando dados do produto...", context);
-                    //   resultProduct = await _controller
-                    //       .getInfosProduto(resultProduct is Produto
-                    //           ? resultProduct.id
-                    //           : (resultProduct as TabelaDePrecoItem)
-                    //               .produto!
-                    //               .id)
-                    //       .then((value) {
-                    //     return value ?? resultProduct;
-                    //   }).catchError((err) {
-                    //     return;
-                    //   });
-                    // }
-
-                    // if (resultProduct != null && context.mounted) {
-                    //   Navigator.pop(context);
-                    //   Navigator.of(context).push(
-                    //     MaterialPageRoute(
-                    //       builder: (context) => CadastroProdutoView(
-                    //           resultProduct is Produto
-                    //               ? resultProduct
-                    //               : (resultProduct as TabelaDePrecoItem).produto
-                    //                   as Produto),
-                    //     ),
-                    //   );
-                    // } else {
-                    //   Navigator.pop(context);
-                    // }
-                  },
-                ),
                 kDebugMode || kProfileMode
                     ? ExpansionTile(
                         title: const Text("Debug"),
@@ -110,16 +67,9 @@ class MainDrawer extends StatelessWidget {
               children: [
                 const Divider(),
                 ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text("Configurações"),
-                  onTap: () =>
-                      Navigator.of(context).pushNamed("/configuracoes"),
-                ),
-                ListTile(
                   leading: const Icon(Icons.logout_rounded),
                   title: const Text("Sair"),
-                  onTap: () => Navigator.of(context)
-                      .pushNamedAndRemoveUntil("/", (route) => false),
+                  onTap: () => SystemNavigator.pop(),
                 )
               ],
             ),

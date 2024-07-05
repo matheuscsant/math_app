@@ -26,18 +26,42 @@ class ComponentsUtils {
   }
 
   /// Método que recebe um BuildContext [context] para construir uma snackBar,
-  /// avisando que o produto foi atualizado.
-  static showSnackProdutoAtualizado(BuildContext context) {
+  /// avisando que ocorreu uma falha de TimeOut em alguma requisição.
+  static showSnackBarTimeout(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Row(
           children: [
-            Icon(Icons.edit_document),
+            Icon(
+              Icons.warning_amber,
+            ),
             SizedBox(
               width: 10,
             ),
             Text(
-              "Produto atualizado com sucesso",
+              "Tempo da solicitação excedido!",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Método que recebe um BuildContext [context] para construir uma snackBar,
+  /// avisando que os produtos foram enviados com sucesso.
+  static showSnackProdutosEnviados(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.check,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              "Produtos enviados com sucesso!",
               maxLines: 2,
             ),
           ],
@@ -47,18 +71,20 @@ class ComponentsUtils {
   }
 
   /// Método que recebe um BuildContext [context] para construir uma snackBar,
-  /// avisando que o produto foi inserido.
-  static showSnackProdutoInserido(BuildContext context) {
+  /// avisando que os produtos foram sincronizados.
+  static showSnackProdutosSincronizados(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Row(
           children: [
-            Icon(Icons.check),
+            Icon(
+              Icons.check,
+            ),
             SizedBox(
               width: 10,
             ),
             Text(
-              "Produto inserido com sucesso",
+              "Produtos sincronizados com sucesso!",
               maxLines: 2,
             ),
           ],
@@ -68,8 +94,8 @@ class ComponentsUtils {
   }
 
   /// Método que recebe um BuildContext [context] para construir uma snackBar,
-  /// avisando que ocorreu uma falha ao inserir/atualizar o produto.
-  static showSnackProdutoFalha(BuildContext context) {
+  /// avisando que ocorreu uma falha ao inserir/atualizar os produtos.
+  static showSnackProdutosFalha(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Row(
@@ -79,7 +105,7 @@ class ComponentsUtils {
               width: 10,
             ),
             Text(
-              "Falha ao inserir/atualizar o produto",
+              "Falha ao inserir/atualizar os produtos",
               maxLines: 2,
             ),
           ],

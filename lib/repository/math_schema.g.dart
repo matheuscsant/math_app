@@ -8,11 +8,8 @@ part of 'math_schema.dart';
 
 $Produto _$$ProdutoFromJson(Map<String, dynamic> json) => $Produto()
   ..id = (json['id'] as num).toInt()
-  ..nome = json['nome'] as String
-  ..preco = (json['preco'] as num).toDouble();
+  ..name = json['name'] as String;
 
 Map<String, dynamic> _$$ProdutoToJson($Produto instance) => <String, dynamic>{
-      'id': instance.id,
-      'nome': instance.nome,
-      'preco': instance.preco,
+      'name': instance.name,
     };

@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:math_app/controllers/dialog_produto.controller.dart';
-import 'package:math_app/formatters/strings.formatter.dart';
 import 'package:math_app/formatters/uppercase.formatter.dart';
 import 'package:math_app/repository/math_schema.dart';
 
@@ -50,25 +49,6 @@ class _DialogInformacoesProdutoState extends State<DialogInformacoesProduto> {
                   style: TextStyle(fontSize: 18),
                 ),
               ),
-              style: const TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            TextFormField(
-              controller: _controller.precoController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                label: Text(
-                  "Preço",
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
-              inputFormatters: [StringsFormatters.getMaskDecimal()],
               style: const TextStyle(
                 fontSize: 20,
               ),

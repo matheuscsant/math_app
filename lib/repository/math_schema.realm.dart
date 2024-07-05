@@ -10,12 +10,10 @@ part of 'math_schema.dart';
 class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
   Produto(
     int id,
-    String nome,
-    double preco,
+    String name,
   ) {
     RealmObjectBase.set(this, 'id', id);
-    RealmObjectBase.set(this, 'nome', nome);
-    RealmObjectBase.set(this, 'preco', preco);
+    RealmObjectBase.set(this, 'name', name);
   }
 
   Produto._();
@@ -26,14 +24,9 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
   set id(int value) => RealmObjectBase.set(this, 'id', value);
 
   @override
-  String get nome => RealmObjectBase.get<String>(this, 'nome') as String;
+  String get name => RealmObjectBase.get<String>(this, 'name') as String;
   @override
-  set nome(String value) => RealmObjectBase.set(this, 'nome', value);
-
-  @override
-  double get preco => RealmObjectBase.get<double>(this, 'preco') as double;
-  @override
-  set preco(double value) => RealmObjectBase.set(this, 'preco', value);
+  set name(String value) => RealmObjectBase.set(this, 'name', value);
 
   @override
   Stream<RealmObjectChanges<Produto>> get changes =>
@@ -49,8 +42,7 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
   EJsonValue toEJson() {
     return <String, dynamic>{
       'id': id.toEJson(),
-      'nome': nome.toEJson(),
-      'preco': preco.toEJson(),
+      'name': name.toEJson(),
     };
   }
 
@@ -59,13 +51,11 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
     return switch (ejson) {
       {
         'id': EJsonValue id,
-        'nome': EJsonValue nome,
-        'preco': EJsonValue preco,
+        'name': EJsonValue name,
       } =>
         Produto(
           fromEJson(id),
-          fromEJson(nome),
-          fromEJson(preco),
+          fromEJson(name),
         ),
       _ => raiseInvalidEJson(ejson),
     };
@@ -76,8 +66,7 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
     register(_toEJson, _fromEJson);
     return SchemaObject(ObjectType.realmObject, Produto, 'Produto', [
       SchemaProperty('id', RealmPropertyType.int, primaryKey: true),
-      SchemaProperty('nome', RealmPropertyType.string),
-      SchemaProperty('preco', RealmPropertyType.double),
+      SchemaProperty('name', RealmPropertyType.string),
     ]);
   }();
 

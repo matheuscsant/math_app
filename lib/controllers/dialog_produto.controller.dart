@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:math_app/repository/math_schema.dart';
 import 'package:math_app/services/realm.service.dart';
-import 'package:math_app/utils/string.util.dart';
 
 class DialogProdutoController {
   late Produto produto;
@@ -12,13 +11,10 @@ class DialogProdutoController {
 
   final TextEditingController idController = TextEditingController();
   late final TextEditingController nomeController;
-  late final TextEditingController precoController;
 
   DialogProdutoController(this.produto) {
     produtoFormKey = GlobalKey<FormState>();
-    nomeController = TextEditingController(text: produto.nome);
-    precoController =
-        TextEditingController(text: StringUtils.numberToDecimal(produto.preco));
+    nomeController = TextEditingController(text: produto.name);
   }
 
   Future<bool> onSaveProduto(BuildContext context) async {
@@ -29,8 +25,7 @@ class DialogProdutoController {
     RealmService.startTransaction();
 
     try {
-      produto.nome = nomeController.text;
-      produto.preco = StringUtils.decimalToDouble(precoController.text);
+      produto.name = nomeController.text;
     } catch (e) {
       RealmService.rollback();
       log(e.toString());
