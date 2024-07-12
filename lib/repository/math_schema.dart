@@ -9,14 +9,19 @@ part 'math_schema.realm.dart';
 @JsonSerializable()
 class $Produto {
   @PrimaryKey()
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  late int id;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  late ObjectId id;
+  @Indexed()
+  late int? codigoAlternativo;
   late String name;
+  late String? tabelaDePreco;
 
   Produto toRealmObject() {
     return Produto(
-      id,
+      ObjectId(),
       name,
+      codigoAlternativo: codigoAlternativo,
+      tabelaDePreco: tabelaDePreco,
     );
   }
 

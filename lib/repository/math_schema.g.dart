@@ -7,9 +7,12 @@ part of 'math_schema.dart';
 // **************************************************************************
 
 $Produto _$$ProdutoFromJson(Map<String, dynamic> json) => $Produto()
-  ..id = (json['id'] as num).toInt()
-  ..name = json['name'] as String;
+  ..codigoAlternativo = (json['codigoAlternativo'] as num?)?.toInt()
+  ..name = json['name'] as String
+  ..tabelaDePreco = json['tabelaDePreco'] as String?;
 
 Map<String, dynamic> _$$ProdutoToJson($Produto instance) => <String, dynamic>{
+      'codigoAlternativo': instance.codigoAlternativo,
       'name': instance.name,
+      'tabelaDePreco': instance.tabelaDePreco,
     };

@@ -37,7 +37,7 @@ class ProdutoService {
   /// no tipo POST para cadastrar os produtos que temos localmente.
   Future<bool> postAllProdutos(List<Produto> produtos) async {
     Uri uri = Uri.http(
-        UrlWebservice.urlLocal.url, UrlWebservice.endPointPostAllProdutos.url);
+        UrlWebservice.urlLocal.url, UrlWebservice.endPointProdutos.url);
 
     late http.Response response;
 
@@ -50,6 +50,28 @@ class ProdutoService {
           }).timeout(const Duration(seconds: 15));
 
       if (response.statusCode != 201) return false;
+    } catch (e) {
+      rethrow;
+    }
+
+    return true;
+  }
+
+  /// Método que será utilizado para enviar um request para o endpoint de produtos
+  /// no tipo DELETE para apagar todos os produtos que temos no banco.
+  Future<bool> deleteAllProdutos() async {
+    Uri uri = Uri.http(
+        UrlWebservice.urlLocal.url, UrlWebservice.endPointProdutos.url);
+
+    late http.Response response;
+
+    try {
+      response = await http.delete(uri, headers: {
+        "Content-type": "application/json",
+        "Charset": "utf-8",
+      }).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode != 204) return false;
     } catch (e) {
       rethrow;
     }

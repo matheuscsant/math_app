@@ -38,8 +38,10 @@ class ComponentsUtils {
             SizedBox(
               width: 10,
             ),
-            Text(
-              "Tempo da solicitação excedido!",
+            Flexible(
+              child: Text(
+                "Tempo da solicitação excedido!",
+              ),
             ),
           ],
         ),
@@ -60,9 +62,11 @@ class ComponentsUtils {
             SizedBox(
               width: 10,
             ),
-            Text(
-              "Produtos enviados com sucesso!",
-              maxLines: 2,
+            Flexible(
+              child: Text(
+                "Produtos enviados com sucesso!",
+                maxLines: 2,
+              ),
             ),
           ],
         ),
@@ -83,9 +87,36 @@ class ComponentsUtils {
             SizedBox(
               width: 10,
             ),
-            Text(
-              "Produtos sincronizados com sucesso!",
-              maxLines: 2,
+            Flexible(
+              child: Text(
+                "Produtos sincronizados com sucesso!",
+                maxLines: 2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Método que recebe um BuildContext [context] para construir uma snackBar,
+  /// avisando que o produto foi excluído.
+  static showSnackProdutoExcluido(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.check,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Flexible(
+              child: Text(
+                "Produto(s) excluído(s) com sucesso!",
+                maxLines: 2,
+              ),
             ),
           ],
         ),
@@ -104,9 +135,11 @@ class ComponentsUtils {
             SizedBox(
               width: 10,
             ),
-            Text(
-              "Falha ao inserir/atualizar os produtos",
-              maxLines: 2,
+            Flexible(
+              child: Text(
+                "Falha ao inserir/atualizar os produtos",
+                maxLines: 2,
+              ),
             ),
           ],
         ),

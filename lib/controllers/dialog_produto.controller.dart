@@ -10,11 +10,17 @@ class DialogProdutoController {
   late GlobalKey<FormState> produtoFormKey;
 
   final TextEditingController idController = TextEditingController();
+  late final TextEditingController codigoAlternativoController;
   late final TextEditingController nomeController;
+  late final TextEditingController tabelaDePrecoController;
 
   DialogProdutoController(this.produto) {
     produtoFormKey = GlobalKey<FormState>();
+    codigoAlternativoController =
+        TextEditingController(text: produto.codigoAlternativo.toString() == "null" ? "" : produto.codigoAlternativo.toString());
     nomeController = TextEditingController(text: produto.name);
+    tabelaDePrecoController =
+        TextEditingController(text: produto.tabelaDePreco);
   }
 
   Future<bool> onSaveProduto(BuildContext context) async {
@@ -25,7 +31,10 @@ class DialogProdutoController {
     RealmService.startTransaction();
 
     try {
+      produto.codigoAlternativo =
+          int.tryParse(codigoAlternativoController.text);
       produto.name = nomeController.text;
+      produto.tabelaDePreco = tabelaDePrecoController.text;
     } catch (e) {
       RealmService.rollback();
       log(e.toString());
