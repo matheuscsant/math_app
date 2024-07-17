@@ -21,12 +21,15 @@ class _DialogFiltrarProdutosState extends State<DialogFiltrarProdutos> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextFormField(
-            controller: _nomeProduto,
-            inputFormatters: [UpperCaseTextFormatter()],
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              label: Text("Produto"),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: TextFormField(
+              controller: _nomeProduto,
+              inputFormatters: [UpperCaseTextFormatter()],
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                label: Text("Produto"),
+              ),
             ),
           ),
         ],

@@ -5,9 +5,11 @@ import 'package:math_app/controllers/start_menu.controller.dart';
 import 'package:math_app/repository/math_schema.dart';
 import 'package:math_app/services/realm.service.dart';
 import 'package:math_app/utils/components.util.dart';
+import 'package:math_app/utils/string.util.dart';
+import 'package:math_app/views/seach_produtos.view.dart';
 import 'package:math_app/widgets/dialog_excluir_item.widget.dart';
-import 'package:math_app/widgets/dialog_filtrar_produtos.widget.dart';
 import 'package:math_app/widgets/dialog_produto.widget.dart';
+import 'package:math_app/widgets/dialog_servidor.widget.dart';
 import 'package:realm/realm.dart';
 
 class StartMenuView extends StatefulWidget {
@@ -21,10 +23,6 @@ class _StartMenuViewState extends State<StartMenuView> {
   final StartMenuController _controller = StartMenuController();
   final ValueNotifier<List<Produto>> filteredProdutos =
       ValueNotifier(RealmService.getAll<Produto>());
-  List<bool> isSelectedItems = List.generate(
-    RealmService.getAll<Produto>().length,
-    (index) => false,
-  );
   bool _allSelected = false;
 
   void handleClick(int item) async {
@@ -51,10 +49,6 @@ class _StartMenuViewState extends State<StartMenuView> {
         Navigator.of(context).pop();
 
         filteredProdutos.value = RealmService.getAll<Produto>();
-        isSelectedItems = List.generate(
-          filteredProdutos.value.length,
-          (index) => false,
-        );
 
         setState(() {
           _allSelected = false;
@@ -64,8 +58,14 @@ class _StartMenuViewState extends State<StartMenuView> {
       case 2:
         ComponentsUtils.showDialogLoading(
             "Preparando relatório, aguarde...", context);
-        await _controller.enviarRelatorio(
-            filteredProdutos.value, isSelectedItems, context);
+        await _controller.enviarRelatorio(filteredProdutos.value, context);
+        break;
+
+      case 3:
+        await showDialog(
+          context: context,
+          builder: (context) => DialogServidor(),
+        );
         break;
     }
   }
@@ -79,10 +79,42 @@ class _StartMenuViewState extends State<StartMenuView> {
         actions: <Widget>[
           _allSelected
               ? IconButton(
+                  onPressed: () async {
+                    bool? result = await showDialog(
+                      context: context,
+                      builder: (context) => const DialogExcluirItem(
+                          "Você tem certeza que quer excluir os produtos selecionados?"),
+                    );
+
+                    if (!(result ?? false)) return;
+
+                    List<Produto> produtosDeletar = filteredProdutos.value;
+                    for (var i = 0; i < filteredProdutos.value.length; i++) {
+                      if (filteredProdutos.value[i].isSelected ?? false) {
+                        await RealmService.delete<Produto>(produtosDeletar[i]);
+                      }
+                    }
+                    setState(() {
+                      filteredProdutos.value =
+                          RealmService.getAll<Produto>().toList();
+                    });
+
+                    for (var p in filteredProdutos.value) {
+                      p.isSelected = false;
+                    }
+
+                    _allSelected = false;
+                    ComponentsUtils.showSnackProdutoExcluido(context);
+                  },
+                  icon: const Icon(Icons.delete_forever),
+                )
+              : Container(),
+          _allSelected
+              ? IconButton(
                   onPressed: () {
                     setState(() {
-                      for (var i = 0; i < isSelectedItems.length; i++) {
-                        isSelectedItems[i] = false;
+                      for (var i = 0; i < filteredProdutos.value.length; i++) {
+                        filteredProdutos.value[i].isSelected = false;
                       }
                     });
                     _allSelected = false;
@@ -97,79 +129,41 @@ class _StartMenuViewState extends State<StartMenuView> {
                       return;
                     }
                     setState(() {
-                      for (var i = 0; i < isSelectedItems.length; i++) {
-                        isSelectedItems[i] = true;
+                      for (var i = 0; i < filteredProdutos.value.length; i++) {
+                        filteredProdutos.value[i].isSelected = true;
                       }
                     });
                     _allSelected = true;
                   },
                   icon: const Icon(Icons.select_all),
                 ),
-          _allSelected
-              ? IconButton(
-                  onPressed: () async {
-                    bool? result = await showDialog(
-                      context: context,
-                      builder: (context) => const DialogExcluirItem(
-                          "Você tem certeza que quer excluir os produtos selecionados?"),
-                    );
-
-                    if (!(result ?? false)) return;
-
-                    List<Produto> produtosDeletar = filteredProdutos.value;
-                    for (var i = 0; i < isSelectedItems.length; i++) {
-                      if (isSelectedItems[i]) {
-                        await RealmService.delete<Produto>(produtosDeletar[i]);
-                      }
-                    }
-                    setState(() {
-                      filteredProdutos.value =
-                          RealmService.getAll<Produto>().toList();
-                    });
-
-                    isSelectedItems = List.generate(
-                      filteredProdutos.value.length,
-                      (index) => false,
-                    );
-
-                    _allSelected = false;
-                    ComponentsUtils.showSnackProdutoExcluido(context);
-                  },
-                  icon: const Icon(Icons.delete_forever),
-                )
-              : Container(),
           IconButton(
             onPressed: () async {
-              String? result = await showDialog(
-                context: context,
-                builder: (context) => const DialogFiltrarProdutos(),
-              );
-              if (result == null || result.isEmpty) {
-                filteredProdutos.value = RealmService.getAll<Produto>();
-              } else {
-                filteredProdutos.value = RealmService.getAll<Produto>()
-                    .where(
-                      (p) => p.name.toUpperCase().contains(result),
-                    )
-                    .toList();
-              }
-              isSelectedItems = List.generate(
-                filteredProdutos.value.length,
-                (index) => false,
-              );
+              List<Produto> produtos = await showSearch(
+                  context: context, delegate: SearchProdutos());
+              setState(() {
+                for (var p in produtos) {
+                  if (p.isSelected ?? false) {
+                    filteredProdutos.value
+                        .where(
+                          (other) => p.name == other.name,
+                        )
+                        .first
+                        .isSelected = true;
+                  }
+                }
+              });
             },
             icon: const Icon(Icons.search),
           ),
           PopupMenuButton<int>(
-            color: Colors.blue,
             onSelected: (item) => handleClick(item),
             itemBuilder: (context) => [
               const PopupMenuItem<int>(
                 value: 0,
                 child: Text(
                   'Enviar produtos p/ banco de dados',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
               const PopupMenuDivider(),
@@ -177,8 +171,7 @@ class _StartMenuViewState extends State<StartMenuView> {
                 value: 1,
                 child: Text(
                   'Receber produtos do banco de dados',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
               const PopupMenuDivider(),
@@ -186,8 +179,15 @@ class _StartMenuViewState extends State<StartMenuView> {
                 value: 2,
                 child: Text(
                   'Enviar produtos selecionados p/ clientes',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem<int>(
+                value: 3,
+                child: Text(
+                  'Definir servidor',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -200,15 +200,14 @@ class _StartMenuViewState extends State<StartMenuView> {
           Produto? result = await showDialog(
               context: context,
               builder: (context) => DialogInformacoesProduto(
-                    Produto(ObjectId(), ""),
+                    Produto(ObjectId(), "", 0.0),
                   )) as Produto?;
           if (result == null) return;
 
           filteredProdutos.value = RealmService.getAll<Produto>();
-          isSelectedItems = List.generate(
-            filteredProdutos.value.length,
-            (index) => false,
-          );
+          for (var i = 0; i < filteredProdutos.value.length; i++) {
+            filteredProdutos.value[i].isSelected = false;
+          }
         },
       ),
       body: ValueListenableBuilder(
@@ -275,10 +274,12 @@ class _StartMenuViewState extends State<StartMenuView> {
 
                                     filteredProdutos.value =
                                         RealmService.getAll<Produto>();
-                                    isSelectedItems = List.generate(
-                                      filteredProdutos.value.length,
-                                      (index) => false,
-                                    );
+                                    for (var i = 0;
+                                        i < filteredProdutos.value.length;
+                                        i++) {
+                                      filteredProdutos.value[i].isSelected =
+                                          false;
+                                    }
 
                                     ComponentsUtils.showSnackProdutoExcluido(
                                         context);
@@ -314,23 +315,45 @@ class _StartMenuViewState extends State<StartMenuView> {
                           produto.tabelaDePreco != null &&
                                   (produto.tabelaDePreco as String).isNotEmpty
                               ? Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    "Tab. de Preço: ${produto.tabelaDePreco}",
-                                    style: const TextStyle(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                    "TAB. DE PREÇO: ${produto.tabelaDePreco}",
+                                    style: TextStyle(
+                                      color: produto.tabelaDePreco != null &&
+                                              produto.tabelaDePreco!
+                                                  .contains("*")
+                                          ? Colors.red
+                                          : Colors.black,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                )
+                              )
                               : Container(),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    "VALOR DO PRODUTO: ${StringUtils.numberToCurrency(produto.valorProduto)}",
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           Row(
                             children: [
                               Checkbox(
-                                value: isSelectedItems[index],
+                                value: produto.isSelected,
                                 onChanged: (value) {
                                   setState(() {
-                                    isSelectedItems[index] = value ?? false;
+                                    produto.isSelected = value ?? false;
                                   });
                                 },
                               ),

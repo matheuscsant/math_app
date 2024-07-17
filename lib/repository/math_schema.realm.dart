@@ -10,7 +10,8 @@ part of 'math_schema.dart';
 class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
   Produto(
     ObjectId id,
-    String name, {
+    String name,
+    double valorProduto, {
     int? codigoAlternativo,
     String? tabelaDePreco,
   }) {
@@ -18,6 +19,7 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
     RealmObjectBase.set(this, 'codigoAlternativo', codigoAlternativo);
     RealmObjectBase.set(this, 'name', name);
     RealmObjectBase.set(this, 'tabelaDePreco', tabelaDePreco);
+    RealmObjectBase.set(this, 'valorProduto', valorProduto);
   }
 
   Produto._();
@@ -47,6 +49,13 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
       RealmObjectBase.set(this, 'tabelaDePreco', value);
 
   @override
+  double get valorProduto =>
+      RealmObjectBase.get<double>(this, 'valorProduto') as double;
+  @override
+  set valorProduto(double value) =>
+      RealmObjectBase.set(this, 'valorProduto', value);
+
+  @override
   Stream<RealmObjectChanges<Produto>> get changes =>
       RealmObjectBase.getChanges<Produto>(this);
 
@@ -63,6 +72,7 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
       'codigoAlternativo': codigoAlternativo.toEJson(),
       'name': name.toEJson(),
       'tabelaDePreco': tabelaDePreco.toEJson(),
+      'valorProduto': valorProduto.toEJson(),
     };
   }
 
@@ -74,10 +84,12 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
         'codigoAlternativo': EJsonValue codigoAlternativo,
         'name': EJsonValue name,
         'tabelaDePreco': EJsonValue tabelaDePreco,
+        'valorProduto': EJsonValue valorProduto,
       } =>
         Produto(
           fromEJson(id),
           fromEJson(name),
+          fromEJson(valorProduto),
           codigoAlternativo: fromEJson(codigoAlternativo),
           tabelaDePreco: fromEJson(tabelaDePreco),
         ),
@@ -94,6 +106,7 @@ class Produto extends $Produto with RealmEntity, RealmObjectBase, RealmObject {
           optional: true, indexType: RealmIndexType.regular),
       SchemaProperty('name', RealmPropertyType.string),
       SchemaProperty('tabelaDePreco', RealmPropertyType.string, optional: true),
+      SchemaProperty('valorProduto', RealmPropertyType.double),
     ]);
   }();
 

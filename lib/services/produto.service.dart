@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:math_app/enums/url_webservices.enum.dart';
 import 'package:math_app/repository/math_schema.dart';
+import 'package:math_app/utils/preferences.util.dart';
 
 class ProdutoService {
   /// Método que será utilizado para enviar um request para o endpoint de produtos
@@ -11,8 +12,9 @@ class ProdutoService {
   Future<List<Produto>> getAllProdutos() async {
     late List<Produto> produtos;
 
-    Uri uri = Uri.http(
-        UrlWebservice.urlLocal.url, UrlWebservice.endPointProdutos.url);
+    String url = PreferencesUtil.getString("IP_SERVIDOR") ?? "";
+
+    Uri uri = Uri.http(url, UrlWebservice.endPointProdutos.url);
 
     late http.Response response;
 
@@ -36,8 +38,9 @@ class ProdutoService {
   /// Método que será utilizado para enviar um request para o endpoint de produtos
   /// no tipo POST para cadastrar os produtos que temos localmente.
   Future<bool> postAllProdutos(List<Produto> produtos) async {
-    Uri uri = Uri.http(
-        UrlWebservice.urlLocal.url, UrlWebservice.endPointProdutos.url);
+    String url = PreferencesUtil.getString("IP_SERVIDOR") ?? "";
+
+    Uri uri = Uri.http(url, UrlWebservice.endPointProdutos.url);
 
     late http.Response response;
 
@@ -60,8 +63,9 @@ class ProdutoService {
   /// Método que será utilizado para enviar um request para o endpoint de produtos
   /// no tipo DELETE para apagar todos os produtos que temos no banco.
   Future<bool> deleteAllProdutos() async {
-    Uri uri = Uri.http(
-        UrlWebservice.urlLocal.url, UrlWebservice.endPointProdutos.url);
+    String url = PreferencesUtil.getString("IP_SERVIDOR") ?? "";
+
+    Uri uri = Uri.http(url, UrlWebservice.endPointProdutos.url);
 
     late http.Response response;
 

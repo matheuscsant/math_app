@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:math_app/controllers/dialog_produto.controller.dart';
+import 'package:math_app/formatters/strings.formatter.dart';
 import 'package:math_app/formatters/uppercase.formatter.dart';
 import 'package:math_app/repository/math_schema.dart';
 
@@ -31,64 +32,100 @@ class _DialogInformacoesProdutoState extends State<DialogInformacoesProduto> {
       title: const Text(
         "Informações do produto",
       ),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _controller.produtoFormKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _controller.codigoAlternativoController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: false),
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  label: Text(
-                    "Código",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: TextFormField(
-                  controller: _controller.nomeController,
-                  inputFormatters: [UpperCaseTextFormatter()],
-                  validator: (value) => value == null || value.isEmpty
-                      ? "Nome do produto deve ser preenchido!"
-                      : null,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    label: Text(
-                      "Produto",
-                      style: TextStyle(fontSize: 18),
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _controller.produtoFormKey,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: TextFormField(
+                    controller: _controller.codigoAlternativoController,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: false),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text(
+                        "Código",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    style: const TextStyle(
+                      fontSize: 20,
                     ),
                   ),
-                  style: const TextStyle(
-                    fontSize: 20,
-                  ),
                 ),
-              ),
-              Padding(
-                padding:  const EdgeInsets.only(top: 8.0),
-                child: TextFormField(
-                  controller: _controller.tabelaDePrecoController,
-                  inputFormatters: [UpperCaseTextFormatter()],
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    label: Text(
-                      "Tabela de preço",
-                      style: TextStyle(fontSize: 18),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: TextFormField(
+                    controller: _controller.nomeController,
+                    inputFormatters: [UpperCaseTextFormatter()],
+                    validator: (value) => value == null || value.isEmpty
+                        ? "Nome do produto deve ser preenchido!"
+                        : null,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text(
+                        "Produto",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    style: const TextStyle(
+                      fontSize: 20,
                     ),
                   ),
-                  style: const TextStyle(
-                    fontSize: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: TextFormField(
+                          controller: _controller.tabelaDePrecoController,
+                          inputFormatters: [UpperCaseTextFormatter()],
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text(
+                              "Tab. de preço",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: TextFormField(
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          controller: _controller.produtoPrecoController,
+                          inputFormatters: [StringsFormatters.getMaskDecimal()],
+                          textAlign: TextAlign.right,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            label: Text(
+                              "Preço",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

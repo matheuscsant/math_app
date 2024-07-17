@@ -8,6 +8,7 @@ import 'package:math_app/repository/math_schema.dart';
 import 'package:math_app/services/produto.service.dart';
 import 'package:math_app/services/realm.service.dart';
 import 'package:math_app/utils/components.util.dart';
+import 'package:math_app/utils/string.util.dart';
 import 'package:share_plus/share_plus.dart';
 
 class StartMenuController {
@@ -55,17 +56,24 @@ class StartMenuController {
     return true;
   }
 
-  Future<void> enviarRelatorio(List<Produto> produtos, List<bool> selectedItems,
-      BuildContext context) async {
+  Future<void> enviarRelatorio(
+      List<Produto> produtos, BuildContext context) async {
     StringBuffer sb = StringBuffer();
 
-    for (var i = 0; i < selectedItems.length; i++) {
-      if (selectedItems[i]) {
-        sb.write("${produtos[i].name}\n");
+    for (var i = 0; i < produtos.length; i++) {
+      if (produtos[i].isSelected ?? false) {
+        sb.write(
+            "${produtos[i].name} - ${StringUtils.numberToDecimal(produtos[i].valorProduto)}\n");
       }
     }
 
     Navigator.of(context).pop();
+
+    if (sb.toString().isEmpty) {
+      ComponentsUtils.showSnackBarWarning(
+          context, "Nenhum produto para ser enviado!");
+      return;
+    }
 
     await Share.share(sb.toString());
   }

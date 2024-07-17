@@ -15,11 +15,16 @@ class $Produto {
   late int? codigoAlternativo;
   late String name;
   late String? tabelaDePreco;
+  late double valorProduto;
+  @Ignored()
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  late bool? isSelected = false;
 
   Produto toRealmObject() {
     return Produto(
       ObjectId(),
       name,
+      valorProduto,
       codigoAlternativo: codigoAlternativo,
       tabelaDePreco: tabelaDePreco,
     );
