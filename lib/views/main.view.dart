@@ -10,8 +10,8 @@ class MainView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(useMaterial3: false, colorScheme: lightColorScheme),
-      darkTheme: ThemeData(useMaterial3: false, colorScheme: darkColorScheme),
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
       initialRoute: "/",
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

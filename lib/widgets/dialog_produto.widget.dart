@@ -31,6 +31,7 @@ class _DialogInformacoesProdutoState extends State<DialogInformacoesProduto> {
       insetPadding: const EdgeInsets.all(15),
       title: const Text(
         "Informações do produto",
+        textAlign: TextAlign.center,
       ),
       content: SizedBox(
         width: MediaQuery.of(context).size.width,

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:math_app/controllers/start_menu.controller.dart';
 import 'package:math_app/repository/math_schema.dart';
 import 'package:math_app/services/realm.service.dart';
+import 'package:math_app/theme/color_schemes.dart';
 import 'package:math_app/utils/components.util.dart';
 import 'package:math_app/utils/string.util.dart';
 import 'package:math_app/views/seach_produtos.view.dart';
-import 'package:math_app/widgets/dialog_excluir_item.widget.dart';
 import 'package:math_app/widgets/dialog_produto.widget.dart';
 import 'package:math_app/widgets/dialog_servidor.widget.dart';
 import 'package:realm/realm.dart';
@@ -33,19 +33,33 @@ class _StartMenuViewState extends State<StartMenuView> {
               context, "Nenhum produto para ser enviado!");
           break;
         }
+        bool? resultEnviar =
+            await ComponentsUtils.showDialogWithSingleChildScrollConfirm(
+                "Aviso",
+                "Ao enviar os produtos, todos os que estiverem no servidor, serão apagados, você tem certeza?",
+                context,
+                "Enviar");
+
+        if (!resultEnviar) return;
 
         ComponentsUtils.showDialogLoading(
             "Enviando produtos, aguarde...", context);
         bool result =
             await _controller.enviarProdutos(context, filteredProdutos.value);
-        if (result) ComponentsUtils.showSnackProdutosEnviados(context);
+        if (result) {
+          ComponentsUtils.showSnackProdutosSucesso(
+              context, "Produtos enviados com sucesso!");
+        }
         Navigator.of(context).pop();
         break;
       case 1:
         ComponentsUtils.showDialogLoading(
             "Sincronizados produtos, aguarde...", context);
         bool result = await _controller.sincronizarProdutos(context);
-        if (result) ComponentsUtils.showSnackProdutosSincronizados(context);
+        if (result) {
+          ComponentsUtils.showSnackProdutosSucesso(
+              context, "Produtos sincronizados com sucesso!");
+        }
         Navigator.of(context).pop();
 
         filteredProdutos.value = RealmService.getAll<Produto>();
@@ -75,18 +89,23 @@ class _StartMenuViewState extends State<StartMenuView> {
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
+        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme == lightColorScheme
+            ? lightColorScheme.primaryContainer
+            : darkColorScheme.primaryContainer,
         title: const Text("Robs App"),
         actions: <Widget>[
           _allSelected
               ? IconButton(
                   onPressed: () async {
-                    bool? result = await showDialog(
-                      context: context,
-                      builder: (context) => const DialogExcluirItem(
-                          "Você tem certeza que quer excluir os produtos selecionados?"),
-                    );
+                    bool result = await ComponentsUtils
+                        .showDialogWithSingleChildScrollConfirm(
+                            "Confirmação de exclusão",
+                            "Você tem certeza que quer excluir os produtos selecionados?",
+                            context,
+                            "Excluir");
 
-                    if (!(result ?? false)) return;
+                    if (!(result)) return;
 
                     List<Produto> produtosDeletar = filteredProdutos.value;
                     for (var i = 0; i < filteredProdutos.value.length; i++) {
@@ -104,7 +123,8 @@ class _StartMenuViewState extends State<StartMenuView> {
                     }
 
                     _allSelected = false;
-                    ComponentsUtils.showSnackProdutoExcluido(context);
+                    ComponentsUtils.showSnackProdutosSucesso(
+                        context, "Produtos");
                   },
                   icon: const Icon(Icons.delete_forever),
                 )
@@ -195,7 +215,10 @@ class _StartMenuViewState extends State<StartMenuView> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         onPressed: () async {
           Produto? result = await showDialog(
               context: context,
@@ -208,6 +231,9 @@ class _StartMenuViewState extends State<StartMenuView> {
           for (var i = 0; i < filteredProdutos.value.length; i++) {
             filteredProdutos.value[i].isSelected = false;
           }
+
+          ComponentsUtils.showSnackProdutosSucesso(
+              context, "Produto inserido com sucesso!");
         },
       ),
       body: ValueListenableBuilder(
@@ -262,13 +288,14 @@ class _StartMenuViewState extends State<StartMenuView> {
                               ),
                               IconButton(
                                   onPressed: () async {
-                                    bool? result = await showDialog(
-                                      context: context,
-                                      builder: (context) => const DialogExcluirItem(
-                                          "Você tem certeza que quer excluir este produto?"),
-                                    );
+                                    bool result = await ComponentsUtils
+                                        .showDialogWithSingleChildScrollConfirm(
+                                            "Confirmação de exclusão",
+                                            "Você tem certeza que quer excluir este produto?",
+                                            context,
+                                            "Excluir");
 
-                                    if (result == null || !result) return;
+                                    if (!result) return;
 
                                     await RealmService.delete(produto);
 
@@ -281,8 +308,9 @@ class _StartMenuViewState extends State<StartMenuView> {
                                           false;
                                     }
 
-                                    ComponentsUtils.showSnackProdutoExcluido(
-                                        context);
+                                    ComponentsUtils.showSnackProdutosSucesso(
+                                        context,
+                                        "Produto(s) excluído(s) com sucesso!");
                                   },
                                   icon: const Icon(
                                       Icons.delete_outline_outlined)),
@@ -298,6 +326,10 @@ class _StartMenuViewState extends State<StartMenuView> {
 
                                     filteredProdutos.value =
                                         RealmService.getAll<Produto>();
+
+                                    ComponentsUtils.showSnackProdutosSucesso(
+                                        context,
+                                        "Produto atualizado com sucesso!");
                                   },
                                   icon: const Icon(Icons.edit_outlined))
                             ],
@@ -314,21 +346,29 @@ class _StartMenuViewState extends State<StartMenuView> {
                           ),
                           produto.tabelaDePreco != null &&
                                   (produto.tabelaDePreco as String).isNotEmpty
-                              ? Padding(
-                                padding: const EdgeInsets.only(top: 8),
-                                child: Text(
-                                    "TAB. DE PREÇO: ${produto.tabelaDePreco}",
-                                    style: TextStyle(
-                                      color: produto.tabelaDePreco != null &&
-                                              produto.tabelaDePreco!
-                                                  .contains("*")
-                                          ? Colors.red
-                                          : Colors.black,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                              )
+                              ? Builder(
+                                  builder: (context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: Text(
+                                        "TAB. DE PREÇO: ${produto.tabelaDePreco}",
+                                        style: TextStyle(
+                                          color: produto.tabelaDePreco !=
+                                                      null &&
+                                                  produto.tabelaDePreco!
+                                                      .contains("*")
+                                              ? Colors.red
+                                              : Theme.of(context).colorScheme ==
+                                                      lightColorScheme
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
                               : Container(),
                           Padding(
                             padding: const EdgeInsets.only(top: 8),

@@ -9,6 +9,8 @@ class ComponentsUtils {
   static showSnackBarWarning(BuildContext context, String warningText) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
+        showCloseIcon: true,
         content: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -37,6 +39,8 @@ class ComponentsUtils {
   static showSnackBarTimeout(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
+        showCloseIcon: true,
         content: Row(
           children: [
             Icon(
@@ -60,10 +64,12 @@ class ComponentsUtils {
   }
 
   /// Método que recebe um BuildContext [context] para construir uma snackBar,
-  /// avisando que os produtos foram enviados com sucesso.
-  static showSnackProdutosEnviados(BuildContext context) {
+  /// avisando que algo deu certo.
+  static showSnackProdutosSucesso(BuildContext context, String content) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
+        showCloseIcon: true,
         content: Row(
           children: [
             Icon(
@@ -76,66 +82,9 @@ class ComponentsUtils {
             SizedBox(
               width: 10,
             ),
-            const Flexible(
+            Flexible(
               child: Text(
-                "Produtos enviados com sucesso!",
-                maxLines: 2,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Método que recebe um BuildContext [context] para construir uma snackBar,
-  /// avisando que os produtos foram sincronizados.
-  static showSnackProdutosSincronizados(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              Icons.check,
-              color: Theme.of(context).colorScheme == darkColorScheme
-                  ? Colors.green
-                  : Colors.lightGreenAccent,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            const Flexible(
-              child: Text(
-                "Produtos sincronizados com sucesso!",
-                maxLines: 2,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Método que recebe um BuildContext [context] para construir uma snackBar,
-  /// avisando que o produto foi excluído.
-  static showSnackProdutoExcluido(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              Icons.check,
-              color: Theme.of(context).colorScheme == darkColorScheme
-                  ? Colors.green
-                  : Colors.lightGreenAccent,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            const Flexible(
-              child: Text(
-                "Produto(s) excluído(s) com sucesso!",
-                maxLines: 2,
+                content,
               ),
             ),
           ],
@@ -149,6 +98,8 @@ class ComponentsUtils {
   static showSnackProdutosFalha(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        showCloseIcon: true,
         content: Row(
           children: [
             Icon(
@@ -198,28 +149,36 @@ class ComponentsUtils {
   }
 
   /// Método que recebe duas Strings [title] e [content] e um BuildContext [context],
-  /// para construir uma Dialog com um SingleChildScroll para permitir grandes quantidades
-  /// de textos.
+  /// para construir uma Dialog com um SingleChildScroll de aviso.
   ///
   /// [title] Será o título da Dialog
   /// [content] Será o conteúdo da Dialog
-  static showDialogWithSingleChildScroll(
-      String title, String content, BuildContext context) {
-    showDialog(
+  static Future<bool> showDialogWithSingleChildScrollConfirm(
+      String title, String content, BuildContext context, String option) async {
+    return await showDialog(
       barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
+        icon: const Icon(
+          Icons.warning_amber,
+          color: Colors.red,
+          size: 30,
+        ),
         title: Text(title),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Ok"))
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("Cancelar")),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(option))
         ],
         content: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.only(left: 10.0),
             child: Text(
               content,
+              textAlign: TextAlign.center,
             ),
           ),
         ),
