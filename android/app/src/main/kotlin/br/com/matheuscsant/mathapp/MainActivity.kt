@@ -1,4 +1,4 @@
-package com.example.math_app
+package br.com.matheuscsant.mathapp
 
 import io.flutter.embedding.android.FlutterActivity
 
